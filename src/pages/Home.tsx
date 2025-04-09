@@ -2,15 +2,20 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { Camera, Search, BookImage, Users, Star, MessageSquare, ChevronRight, Mail } from "lucide-react";
+import Logo from "@/components/Logo";
+import { 
+  Camera, Search, BookImage, Users, Star, 
+  MessageSquare, ChevronRight, Mail, ArrowRight,
+  Facebook, Twitter, Instagram, Linkedin, Github
+} from "lucide-react";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Header */}
-      <header className="py-4 px-6 md:px-10 flex items-center justify-between border-b border-border">
+      <header className="py-4 px-6 md:px-10 flex items-center justify-between border-b border-border sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div className="flex items-center">
-          <h1 className="text-2xl font-bold text-primary">PhotoFlow</h1>
+          <Logo />
         </div>
         <nav className="hidden md:flex items-center space-x-8">
           <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -35,59 +40,76 @@ const Home = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-6 md:px-10 flex flex-col items-center text-center">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl mb-6">
-          Smart Photo Management for Photographers and Event Managers
-        </h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10">
-          Automate your workflow, organize your photos with AI, and deliver beautiful digital albums to your clients.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link to="/login">
-            <Button size="lg" className="px-8">
-              Get Started
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-          <a href="#features">
-            <Button size="lg" variant="outline">
-              Learn More
-            </Button>
-          </a>
+      <section className="py-20 px-6 md:px-10 flex flex-col items-center text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background pointer-events-none"></div>
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Smart Photo Management for Photographers and Event Managers
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+            Automate your workflow, organize your photos with AI, and deliver beautiful digital albums to your clients.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/login">
+              <Button size="lg" className="px-8 group">
+                Get Started
+                <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
+            <a href="#features">
+              <Button size="lg" variant="outline">
+                Learn More
+              </Button>
+            </a>
+          </div>
         </div>
       </section>
 
       {/* Features Section */}
       <section id="features" className="py-20 px-6 md:px-10 bg-muted">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Powerful Features</h2>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Powerful Features</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Everything you need to manage, organize, and deliver your photos efficiently
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-card p-8 rounded-lg shadow-sm border border-border">
-              <div className="bg-primary/10 p-3 rounded-full w-fit mb-6">
-                <Camera className="h-6 w-6 text-primary" />
+            <div className="bg-card p-8 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative z-10">
+                <div className="bg-primary/10 p-3 rounded-full w-fit mb-6">
+                  <Camera className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Photo Management</h3>
+                <p className="text-muted-foreground">
+                  Upload and organize all your event photos in one place. Batch process and organize your work effortlessly.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-4">Photo Management</h3>
-              <p className="text-muted-foreground">
-                Upload and organize all your event photos in one place. Batch process and organize your work effortlessly.
-              </p>
             </div>
-            <div className="bg-card p-8 rounded-lg shadow-sm border border-border">
-              <div className="bg-primary/10 p-3 rounded-full w-fit mb-6">
-                <Search className="h-6 w-6 text-primary" />
+            <div className="bg-card p-8 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative z-10">
+                <div className="bg-primary/10 p-3 rounded-full w-fit mb-6">
+                  <Search className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Smart Search</h3>
+                <p className="text-muted-foreground">
+                  Find photos using face recognition or text prompts. Our AI helps you locate the perfect shots instantly.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-4">Smart Search</h3>
-              <p className="text-muted-foreground">
-                Find photos using face recognition or text prompts. Our AI helps you locate the perfect shots instantly.
-              </p>
             </div>
-            <div className="bg-card p-8 rounded-lg shadow-sm border border-border">
-              <div className="bg-primary/10 p-3 rounded-full w-fit mb-6">
-                <BookImage className="h-6 w-6 text-primary" />
+            <div className="bg-card p-8 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative z-10">
+                <div className="bg-primary/10 p-3 rounded-full w-fit mb-6">
+                  <BookImage className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Digital Albums</h3>
+                <p className="text-muted-foreground">
+                  Create beautiful digital albums to deliver to your clients. Custom branding and easy sharing options.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-4">Digital Albums</h3>
-              <p className="text-muted-foreground">
-                Create beautiful digital albums to deliver to your clients. Custom branding and easy sharing options.
-              </p>
             </div>
           </div>
         </div>
@@ -117,8 +139,9 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className="md:w-1/2 bg-accent rounded-lg p-8">
-              <div className="aspect-video bg-muted rounded-md flex items-center justify-center">
+            <div className="md:w-1/2 bg-accent rounded-lg p-8 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative z-10 aspect-video bg-muted rounded-md flex items-center justify-center">
                 <Camera className="h-20 w-20 text-muted-foreground" />
               </div>
             </div>
@@ -129,9 +152,14 @@ const Home = () => {
       {/* Testimonials Section */}
       <section id="testimonials" className="py-20 px-6 md:px-10 bg-muted">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">What Our Users Say</h2>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">What Our Users Say</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Hear from photographers and event managers who use PhotoFlow
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-card p-8 rounded-lg shadow-sm border border-border">
+            <div className="bg-card p-8 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
               <div className="flex items-center mb-4">
                 <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                 <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
@@ -153,7 +181,7 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-card p-8 rounded-lg shadow-sm border border-border">
+            <div className="bg-card p-8 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
               <div className="flex items-center mb-4">
                 <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                 <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
@@ -175,7 +203,7 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-card p-8 rounded-lg shadow-sm border border-border">
+            <div className="bg-card p-8 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
               <div className="flex items-center mb-4">
                 <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                 <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
@@ -219,8 +247,9 @@ const Home = () => {
             </div>
           </div>
           <Link to="/login">
-            <Button size="lg" className="px-8">
+            <Button size="lg" className="px-8 group">
               Start Your Free Trial
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
         </div>
@@ -231,7 +260,7 @@ const Home = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <h2 className="text-xl font-bold text-primary">PhotoFlow</h2>
+              <Logo />
               <p className="text-sm text-muted-foreground mt-2">
                 Smart photo management for photographers
               </p>
@@ -262,8 +291,27 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>© 2025 PhotoFlow. All rights reserved.</p>
+          <div className="mt-8 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-muted-foreground mb-4 md:mb-0">
+              © 2025 PhotoFlow. All rights reserved.
+            </p>
+            <div className="flex space-x-4">
+              <a href="#" className="text-muted-foreground hover:text-foreground" aria-label="Facebook">
+                <Facebook size={18} />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground" aria-label="Twitter">
+                <Twitter size={18} />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground" aria-label="Instagram">
+                <Instagram size={18} />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground" aria-label="LinkedIn">
+                <Linkedin size={18} />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground" aria-label="GitHub">
+                <Github size={18} />
+              </a>
+            </div>
           </div>
         </div>
       </footer>
