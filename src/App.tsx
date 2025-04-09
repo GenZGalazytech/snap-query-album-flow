@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,63 +16,78 @@ import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
+import SupabaseCredentialsWarning from "./components/SupabaseCredentialsWarning";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="light">
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Dashboard />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/upload" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Upload />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/search" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Search />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/albums" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <Albums />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/albums/:id" element={
-                <ProtectedRoute>
-                  <MainLayout>
-                    <AlbumView />
-                  </MainLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+const hasSupabaseCredentials = 
+  !!import.meta.env.VITE_SUPABASE_URL && 
+  !!import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+const App = () => {
+  if (!hasSupabaseCredentials) {
+    return (
+      <ThemeProvider defaultTheme="light">
+        <SupabaseCredentialsWarning />
+      </ThemeProvider>
+    );
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="light">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <Dashboard />
+                    </MainLayout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/upload" element={
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <Upload />
+                    </MainLayout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/search" element={
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <Search />
+                    </MainLayout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/albums" element={
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <Albums />
+                    </MainLayout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/albums/:id" element={
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <AlbumView />
+                    </MainLayout>
+                  </ProtectedRoute>
+                } />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
