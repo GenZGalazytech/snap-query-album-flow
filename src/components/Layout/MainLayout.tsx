@@ -5,11 +5,14 @@ import { cn } from "@/lib/utils";
 import { Upload, Search, BookImage, Home, LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import Logo from "@/components/Logo";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { signOut, user } = useAuth();
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -18,16 +21,17 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     { name: "Albums", href: "/albums", icon: BookImage },
   ];
 
-  const handleLogout = () => {
-    // In a real app, you would handle logout logic here
-    navigate("/");
+  const handleLogout = async () => {
+    await signOut();
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted">
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-card shadow-sm p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-primary">PhotoFlow</h1>
+        <Link to="/dashboard">
+          <Logo size="sm" />
+        </Link>
         <div className="flex items-center space-x-2">
           <ThemeToggle />
           <button
@@ -83,12 +87,14 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   </div>
                 </Link>
               ))}
-              <div className="px-3 py-3">
-                <Button variant="outline" className="w-full" onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log Out
-                </Button>
-              </div>
+              {user && (
+                <div className="px-3 py-3">
+                  <Button variant="outline" className="w-full" onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log Out
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -98,10 +104,22 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
         <div className="flex flex-col flex-grow bg-card border-r border-border pt-5 overflow-y-auto">
           <div className="flex items-center justify-between flex-shrink-0 px-4">
-            <h1 className="text-2xl font-bold text-primary">PhotoFlow</h1>
+            <Link to="/dashboard">
+              <Logo size="md" />
+            </Link>
             <ThemeToggle />
           </div>
-          <div className="mt-10 flex-1 flex flex-col">
+          
+          {user && (
+            <div className="px-4 mt-6">
+              <div className="py-2 px-3 bg-accent/50 rounded-lg">
+                <p className="text-sm text-muted-foreground">Signed in as</p>
+                <p className="font-medium truncate">{user.email}</p>
+              </div>
+            </div>
+          )}
+          
+          <div className="mt-6 flex-1 flex flex-col">
             <nav className="flex-1 px-2 pb-4 space-y-1">
               {navigation.map((item) => (
                 <Link

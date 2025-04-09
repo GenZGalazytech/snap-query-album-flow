@@ -3,13 +3,18 @@ import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { toast } from "@/components/ui/use-toast";
-import { Upload as UploadIcon, X, Image } from "lucide-react";
+import { toast } from "sonner";
+import { Upload as UploadIcon, X, Image, Check } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { uploadPhoto } from "@/services/photoService";
 
 const Upload = () => {
   const [files, setFiles] = useState<Array<File & { preview?: string }>>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  
+  const { user } = useAuth();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // Add preview URLs to the accepted files
@@ -38,41 +43,56 @@ const Upload = () => {
     });
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (files.length === 0) {
-      toast({
-        title: "No files selected",
-        description: "Please select at least one image to upload.",
-        variant: "destructive",
-      });
+      toast.error("No files selected. Please select at least one image to upload.");
       return;
     }
 
-    // Simulate upload process
+    if (!user) {
+      toast.error("You must be logged in to upload files.");
+      return;
+    }
+
     setIsUploading(true);
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 5;
-      setUploadProgress(progress);
-      
-      if (progress >= 100) {
-        clearInterval(interval);
-        setIsUploading(false);
-        toast({
-          title: "Upload complete",
-          description: `Successfully uploaded ${files.length} files.`,
-        });
-        // In a real app, you would probably clear the files after upload
-        // setFiles([]);
+    setUploadProgress(0);
+    setUploadedFiles([]);
+    
+    const totalFiles = files.length;
+    let completedFiles = 0;
+    const successfulUploads: string[] = [];
+    
+    for (const file of files) {
+      try {
+        const result = await uploadPhoto(file, user.id);
+        if (result) {
+          successfulUploads.push(result.id);
+        }
+        completedFiles++;
+        setUploadProgress(Math.round((completedFiles / totalFiles) * 100));
+      } catch (error) {
+        console.error("Error uploading file:", error);
       }
-    }, 200);
+    }
+
+    setUploadedFiles(successfulUploads);
+
+    if (successfulUploads.length === totalFiles) {
+      toast.success(`Successfully uploaded ${successfulUploads.length} files.`);
+    } else if (successfulUploads.length > 0) {
+      toast.warning(`Uploaded ${successfulUploads.length} of ${totalFiles} files. Some uploads failed.`);
+    } else {
+      toast.error("Failed to upload files. Please try again.");
+    }
+
+    setIsUploading(false);
   };
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Upload Photos</h1>
-        <p className="mt-1 text-gray-500">
+        <h1 className="text-3xl font-bold text-foreground">Upload Photos</h1>
+        <p className="mt-1 text-muted-foreground">
           Drag and drop your event photos to get started
         </p>
       </div>
@@ -80,15 +100,15 @@ const Upload = () => {
       <div 
         {...getRootProps()} 
         className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${
-          isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-blue-400"
+          isDragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
         }`}
       >
         <input {...getInputProps()} />
-        <UploadIcon className="mx-auto h-12 w-12 text-gray-400" />
-        <p className="mt-2 text-lg font-medium text-gray-900">
+        <UploadIcon className="mx-auto h-12 w-12 text-muted-foreground" />
+        <p className="mt-2 text-lg font-medium text-foreground">
           {isDragActive ? "Drop the files here..." : "Drag & drop images here"}
         </p>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-muted-foreground">
           or click to select files from your computer
         </p>
         <Button 
@@ -113,7 +133,7 @@ const Upload = () => {
       {files.length > 0 && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-foreground">
               Selected Photos ({files.length})
             </h2>
             <div className="space-x-2">
@@ -136,34 +156,36 @@ const Upload = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {files.map((file, index) => (
               <div key={index} className="relative group">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                <div className="aspect-square rounded-lg overflow-hidden bg-muted border border-border">
                   {file.preview ? (
                     <img
                       src={file.preview}
                       alt={file.name}
                       className="h-full w-full object-cover"
-                      onLoad={() => {
-                        // Allow browser to revoke data URIs after the image has loaded
-                        // URL.revokeObjectURL(file.preview || '');
-                      }}
                     />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center">
-                      <Image className="h-8 w-8 text-gray-400" />
+                      <Image className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  )}
+                  
+                  {uploadedFiles.includes(file.name) && (
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                      <Check className="h-8 w-8 text-green-500" />
                     </div>
                   )}
                 </div>
                 <button
                   onClick={() => removeFile(index)}
-                  className="absolute top-2 right-2 p-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-2 right-2 p-1 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
                   disabled={isUploading}
                 >
                   <X className="h-4 w-4" />
                 </button>
-                <p className="mt-1 text-xs text-gray-500 truncate">
+                <p className="mt-1 text-xs text-foreground truncate">
                   {file.name}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-muted-foreground">
                   {(file.size / 1024 / 1024).toFixed(2)} MB
                 </p>
               </div>
