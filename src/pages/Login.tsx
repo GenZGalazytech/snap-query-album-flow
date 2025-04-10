@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import Logo from "@/components/Logo";
 import { Loader2, Mail, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 const Login = () => {
   // Login form state
@@ -23,6 +25,7 @@ const Login = () => {
   const [fullName, setFullName] = useState("");
 
   const { signIn, signInWithGoogle, signUp, loading } = useAuth();
+  const [creatingTestUser, setCreatingTestUser] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +40,47 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     await signInWithGoogle();
   };
+
+  // Function to create test user
+  const createTestUser = async () => {
+    try {
+      setCreatingTestUser(true);
+      
+      // Fixed email and password for test user
+      const testEmail = "test@gmail.com";
+      const testPassword = "test123";
+      const testName = "Test User";
+      
+      const { error } = await supabase.auth.signUp({
+        email: testEmail,
+        password: testPassword,
+        options: {
+          data: {
+            full_name: testName,
+          },
+        },
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Test user created successfully! You can sign in with test@gmail.com and test123');
+    } catch (error: any) {
+      if (error.message.includes('already registered')) {
+        toast.info('Test user already exists! You can sign in with test@gmail.com and test123');
+      } else {
+        toast.error(error.message || 'Error creating test user');
+      }
+    } finally {
+      setCreatingTestUser(false);
+    }
+  };
+
+  // Call createTestUser once when component mounts
+  useEffect(() => {
+    createTestUser();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
@@ -101,6 +145,12 @@ const Login = () => {
                         required
                       />
                     </div>
+                  </div>
+                  
+                  {/* Add a note about the test user */}
+                  <div className="rounded-md bg-muted p-3 text-sm">
+                    <p>Test account: <strong>test@gmail.com</strong></p>
+                    <p>Password: <strong>test123</strong></p>
                   </div>
                   
                   <Button type="submit" className="w-full" disabled={loading}>

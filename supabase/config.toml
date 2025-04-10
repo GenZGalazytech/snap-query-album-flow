@@ -49,6 +49,7 @@ site_url = "https://lovable.dev"
 additional_redirect_urls = ["https://lovable.dev/auth/callback"]
 jwt_expiry = 3600
 enable_signup = true
+enable_confirmations = false
 
 [analytics]
 enabled = false
