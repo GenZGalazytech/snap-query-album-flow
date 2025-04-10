@@ -15,7 +15,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      search_photos: {
+        Args: {
+          query_embedding: number[]
+          search_user_id: string
+          match_threshold: number
+          match_count: number
+        }
+        Returns: {
+          id: string
+          name: string
+          user_id: string
+          storage_path: string
+          url: string
+          size: number
+          content_type: string
+          metadata: Json
+          created_at: string
+          album_id: string
+          event_id: string
+          embedding: number[]
+          tags: string[]
+          context: string
+          faces: string[]
+          similarity: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
