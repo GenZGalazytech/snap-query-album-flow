@@ -1,20 +1,54 @@
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import { toast } from "sonner";
-import { Upload as UploadIcon, X, Image, Check } from "lucide-react";
+import { Upload as UploadIcon, X, Image, Check, FolderPlus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { uploadPhoto } from "@/services/photoService";
+import { getUserEvents } from "@/services/eventService";
+import { Label } from "@/components/ui/label";
 
 const Upload = () => {
+  const { search } = useLocation();
+  const navigate = useNavigate();
+  const query = new URLSearchParams(search);
+  const eventIdFromQuery = query.get('eventId');
+  
   const [files, setFiles] = useState<Array<File & { preview?: string }>>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(eventIdFromQuery);
   
   const { user } = useAuth();
+
+  // Fetch user's events
+  const { data: events } = useQuery({
+    queryKey: ['events', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      return await getUserEvents(user.id);
+    },
+    enabled: !!user
+  });
+  
+  // Set selected event from URL query parameter
+  useEffect(() => {
+    if (eventIdFromQuery) {
+      setSelectedEventId(eventIdFromQuery);
+    }
+  }, [eventIdFromQuery]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // Add preview URLs to the accepted files
@@ -64,7 +98,7 @@ const Upload = () => {
     
     for (const file of files) {
       try {
-        const result = await uploadPhoto(file, user.id);
+        const result = await uploadPhoto(file, user.id, selectedEventId || undefined);
         if (result) {
           successfulUploads.push(result.id);
         }
@@ -79,6 +113,15 @@ const Upload = () => {
 
     if (successfulUploads.length === totalFiles) {
       toast.success(`Successfully uploaded ${successfulUploads.length} files.`);
+      
+      // Redirect to event page if an event was selected
+      if (selectedEventId) {
+        const redirectToEvent = window.confirm("Would you like to view the event now?");
+        if (redirectToEvent) {
+          navigate(`/events/${selectedEventId}`);
+          return;
+        }
+      }
     } else if (successfulUploads.length > 0) {
       toast.warning(`Uploaded ${successfulUploads.length} of ${totalFiles} files. Some uploads failed.`);
     } else {
@@ -95,6 +138,35 @@ const Upload = () => {
         <p className="mt-1 text-muted-foreground">
           Drag and drop your event photos to get started
         </p>
+      </div>
+      
+      {/* Event Selection */}
+      <div className="space-y-2">
+        <Label htmlFor="event-select">Choose an event (optional)</Label>
+        <div className="flex gap-2 items-center">
+          <Select value={selectedEventId || ""} onValueChange={setSelectedEventId}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select an event (optional)" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">No specific event</SelectItem>
+              {events?.map(event => (
+                <SelectItem key={event.id} value={event.id}>
+                  {event.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={() => navigate('/events')}
+            title="Create new event"
+          >
+            <FolderPlus className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <div 

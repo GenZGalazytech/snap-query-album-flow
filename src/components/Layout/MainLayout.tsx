@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Upload, Search, BookImage, Home, LogOut } from "lucide-react";
+import { Upload, Search, BookImage, Home, LogOut, Calendar } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,8 +17,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "Upload", href: "/upload", icon: Upload },
-    { name: "Smart Search", href: "/search", icon: Search },
+    { name: "Events", href: "/events", icon: Calendar },
     { name: "Albums", href: "/albums", icon: BookImage },
+    { name: "Smart Search", href: "/search", icon: Search },
   ];
 
   const handleLogout = async () => {

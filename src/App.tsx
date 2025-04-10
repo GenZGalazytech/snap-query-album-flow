@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +11,8 @@ import Upload from "./pages/Upload";
 import Search from "./pages/Search";
 import Albums from "./pages/Albums";
 import AlbumView from "./pages/AlbumView";
+import Events from "./pages/Events";
+import EventView from "./pages/EventView";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -77,6 +80,20 @@ const App = () => {
                   <ProtectedRoute>
                     <MainLayout>
                       <AlbumView />
+                    </MainLayout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/events" element={
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <Events />
+                    </MainLayout>
+                  </ProtectedRoute>
+                } />
+                <Route path="/events/:id" element={
+                  <ProtectedRoute>
+                    <MainLayout>
+                      <EventView />
                     </MainLayout>
                   </ProtectedRoute>
                 } />
