@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
@@ -11,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Photo } from "@/types/database.types";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 const Search = () => {
   const { user } = useAuth();
