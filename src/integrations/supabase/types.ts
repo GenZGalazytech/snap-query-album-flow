@@ -9,12 +9,225 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      albums: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          name: string
+          user_id: string
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name: string
+          user_id: string
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string
+          date: string
+          description: string | null
+          id: string
+          is_public: boolean
+          location: string | null
+          name: string
+          photo_count: number
+          share_code: string | null
+          user_id: string
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string
+          date: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          location?: string | null
+          name: string
+          photo_count?: number
+          share_code?: string | null
+          user_id: string
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          location?: string | null
+          name?: string
+          photo_count?: number
+          share_code?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      face_profiles: {
+        Row: {
+          created_at: string
+          embedding: number[]
+          id: string
+          name: string
+          reference_photo_url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          embedding: number[]
+          id?: string
+          name: string
+          reference_photo_url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          embedding?: number[]
+          id?: string
+          name?: string
+          reference_photo_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      photos: {
+        Row: {
+          album_id: string | null
+          content_type: string
+          context: string | null
+          created_at: string
+          embedding: number[] | null
+          event_id: string | null
+          faces: string[] | null
+          id: string
+          metadata: Json | null
+          name: string
+          size: number
+          storage_path: string
+          tags: string[] | null
+          url: string
+          user_id: string
+        }
+        Insert: {
+          album_id?: string | null
+          content_type: string
+          context?: string | null
+          created_at?: string
+          embedding?: number[] | null
+          event_id?: string | null
+          faces?: string[] | null
+          id?: string
+          metadata?: Json | null
+          name: string
+          size: number
+          storage_path: string
+          tags?: string[] | null
+          url: string
+          user_id: string
+        }
+        Update: {
+          album_id?: string | null
+          content_type?: string
+          context?: string | null
+          created_at?: string
+          embedding?: number[] | null
+          event_id?: string | null
+          faces?: string[] | null
+          id?: string
+          metadata?: Json | null
+          name?: string
+          size?: number
+          storage_path?: string
+          tags?: string[] | null
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photos_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "albums"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "photos_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shared_links: {
+        Row: {
+          created_at: string
+          event_id: string
+          expires_at: string | null
+          id: string
+          requires_face_auth: boolean
+          share_code: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          expires_at?: string | null
+          id?: string
+          requires_face_auth?: boolean
+          share_code: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          expires_at?: string | null
+          id?: string
+          requires_face_auth?: boolean
+          share_code?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shared_links_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      decrement_event_photo_count: {
+        Args: { event_id: string }
+        Returns: undefined
+      }
+      increment_event_photo_count: {
+        Args: { event_id: string }
+        Returns: undefined
+      }
       search_photos: {
         Args: {
           query_embedding: number[]
